@@ -86,122 +86,122 @@ export default class Header extends React.Component
             store.dispatch(fetch())
         }}>
     <div className="row">
-            <div className={ "**custom**" === this.props.query.ageGroup ? "col-sm-6" : "col-sm-12" }>
-    <div className="form-group">
-            {/*<label>Name:</label>*/}
-            <div className="input-group">
-            <span className="input-group-addon"><small>Name:</small></span>
-        <input
-        type="text"
-        className="form-control input-sm"
-        placeholder="Search by name..."
-        value={ this.props.query.params.name || "" }
-        onChange={e => {
-            store.dispatch(setParam({
-                name : "name",
-                value: e.target.value
-            }))
-            this.fetch()
-        }}
-        />
-        </div>
-        </div>
+        <div className={ "**custom**" === this.props.query.ageGroup ? "col-sm-6" : "col-sm-12" }>
+            <div className="form-group">
+                {/*<label>Name:</label>*/}
+                <div className="input-group">
+                    <span className="input-group-addon"><small>Name:</small></span>
+                    <input
+                    type="text"
+                    className="form-control input-sm"
+                    placeholder="Search by name..."
+                    value={ this.props.query.params.name || "" }
+                    onChange={e => {
+                        store.dispatch(setParam({
+                            name : "name",
+                            value: e.target.value
+                        }))
+                        this.fetch()
+                    }}
+                    />
+                </div>
+            </div>
         </div>
         <div className={ "**custom**" === this.props.query.ageGroup ? "col-sm-6" : "col-sm-12" }>
-    <div className="form-group">
-            {/*<label>State:</label>*/}
-            <div className="input-group">
-            <span className="input-group-addon"><small>State:</small></span>
-        <input
-        type="text"
-        className="form-control input-sm"
-        placeholder="Search by state..."
-        value={ this.props.query.state || "" }
-        onChange={e => {
-            store.dispatch(setState(e.target.value))
-            this.fetch()
-        }}
-        />
-        </div>
-        </div>
+            <div className="form-group">
+                {/*<label>State:</label>*/}
+                <div className="input-group">
+                    <span className="input-group-addon"><small>State:</small></span>
+                    <input
+                        type="text"
+                        className="form-control input-sm"
+                        placeholder="Search by state..."
+                        value={ this.props.query.state || "" }
+                        onChange={e => {
+                            store.dispatch(setState(e.target.value))
+                            this.fetch()
+                        }}
+                    />
+                </div>
+            </div>
         </div>
         <div className="col-sm-6">
             <div className="form-group">
-            {/*<label>Gender:</label>*/}
-            <select
-        className="form-control input-sm"
-        onChange={ e => {
-            store.dispatch(setGender(e.target.value))
-            this.fetch()
-        }}
-        value={ this.props.query.gender || "" }
-            >
-            <option value="male">Males</option>
-            <option value="female">Females</option>
-            <option value="">Any Gender</option>
-        </select>
+                {/*<label>Gender:</label>*/}
+                <select
+                    className="form-control input-sm"
+                    onChange={ e => {
+                        store.dispatch(setGender(e.target.value))
+                        this.fetch()
+                    }}
+                    value={ this.props.query.gender || "" }
+                        >
+                        <option value="male">Males</option>
+                        <option value="female">Females</option>
+                        <option value="">Any Gender</option>
+                </select>
+            </div>
         </div>
+        <div className={ "**custom**" === this.props.query.ageGroup ? "col-sm-12" : "col-sm-6" }>
+            <div className="form-group">
+                    {/*<label>Age:</label>*/}
+                    <AgeSelector
+                    min={ this.props.query.minAge || { value: 0  , units: "years" } }
+                    max={ this.props.query.maxAge || { value: 100, units: "years" } }
+                    onMinChange={ age => {
+                        store.dispatch(setMinAge(age))
+                        //if ("**custom**" != this.props.query.ageGroup) {
+                        this.fetch()
+                        //}
+                    }}
+                    onMaxChange={ age => {
+                        store.dispatch(setMaxAge(age))
+                        //if ("**custom**" != this.props.query.ageGroup) {
+                        this.fetch()
+                        //}
+                    }}
+                    onGroupChange={ group => {
+                        store.dispatch(setAgeGroup(group))
+                        //if ("**custom**" != this.props.query.ageGroup) {
+                        this.fetch()
+                        //}
+                    }}
+                    //update={ () => this.fetch() }
+                    group={ this.props.query.ageGroup }
+                    />
+            </div>
         </div>
         <div className="row">
             <div className="col-sm-12">
-            <div className="form-group">
-            <TagSelector
-        tags={
-            Object.keys(this.props.settings.server.conditions).map(key => {
-                let condition = this.props.settings.server.conditions[key];
-                return {
-                    key,
-                    label: condition.description,
-                    data : condition
-                }
-            })
-        }
-        onChange={
-            selection => {
-            let conditions = {}
-            selection.forEach(tag => {
-                conditions[tag.key] = tag.data
-            })
-            store.dispatch(setConditions(conditions))
-            this.fetch()
-        }
-    }
-        label="condition code"
-        selected={ Object.keys(this.props.query.conditions) }
-        />
+                <div className="form-group">
+                    <TagSelector
+                        tags={
+                            Object.keys(this.props.settings.server.conditions).map(key => {
+                                let condition = this.props.settings.server.conditions[key];
+                                return {
+                                    key,
+                                    label: condition.description,
+                                    data : condition
+                                }
+                            })
+                        }
+                        onChange={
+                            selection => {
+                            let conditions = {}
+                            selection.forEach(tag => {
+                                conditions[tag.key] = tag.data
+                            })
+                            store.dispatch(setConditions(conditions))
+                            this.fetch()
+                        }
+                    }
+                        label="condition code"
+                        selected={ Object.keys(this.props.query.conditions) }
+                />
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
-        <div className={ "**custom**" === this.props.query.ageGroup ? "col-sm-12" : "col-sm-6" }>
-    <div className="form-group">
-            {/*<label>Age:</label>*/}
-            <AgeSelector
-        min={ this.props.query.minAge || { value: 0  , units: "years" } }
-        max={ this.props.query.maxAge || { value: 100, units: "years" } }
-        onMinChange={ age => {
-            store.dispatch(setMinAge(age))
-            //if ("**custom**" != this.props.query.ageGroup) {
-            this.fetch()
-            //}
-        }}
-        onMaxChange={ age => {
-            store.dispatch(setMaxAge(age))
-            //if ("**custom**" != this.props.query.ageGroup) {
-            this.fetch()
-            //}
-        }}
-        onGroupChange={ group => {
-            store.dispatch(setAgeGroup(group))
-            //if ("**custom**" != this.props.query.ageGroup) {
-            this.fetch()
-            //}
-        }}
-        //update={ () => this.fetch() }
-        group={ this.props.query.ageGroup }
-        />
-        </div>
-        </div>
-        </div>
+    </div>
         </form>
     )
     }
