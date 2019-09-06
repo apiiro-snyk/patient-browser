@@ -62,6 +62,11 @@ export default class PatientListItem extends React.Component
                         <span className="deceased-label">Deceased</span> :
                         null
                     }</b>
+                    <b>{ name } {
+                        this.props.patient.meta.tag.find(p => p.code == "AtRiskAsthmatics") ?
+                        <span className="deceased-label">AtRiskAsthmatics</span> :
+                        null
+                    }</b>
                     <small><b>{age}</b> old { this.renderGender() }</small>
                     <footer className="small">
                         <span>
