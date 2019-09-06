@@ -33,6 +33,7 @@ const ADD_TAG          = "app/search/ADD_TAG"
 const DEL_TAG          = "app/search/DEL_TAG"
 const SET_CONDITIONS   = "app/search/SET_CONDITIONS"
 const SET_GENDER       = "app/search/SET_GENDER"
+const SET_STATE        = "app/search/SET_STATE"
 const SET_PARAM        = "app/search/SET_PARAM"
 const SET_QUERY_STRING = "app/search/SET_QUERY_STRING"
 const SET_QUERY_TYPE   = "app/search/SET_QUERY_TYPE"
@@ -52,6 +53,7 @@ export const addCondition   = createAction(ADD_CONDITION)
 export const delCondition   = createAction(DEL_CONDITION)
 export const setConditions  = createAction(SET_CONDITIONS)
 export const setGender      = createAction(SET_GENDER)
+export const setState       = createAction(SET_STATE)
 export const setParam       = createAction(SET_PARAM)
 export const setQueryString = createAction(SET_QUERY_STRING)
 export const setQueryType   = createAction(SET_QUERY_TYPE)
@@ -177,6 +179,11 @@ export default handleActions({
 
     [SET_GENDER]: (state, action) => {
         queryBuilder.setGender(action.payload)
+        return { ...state, ...queryBuilder.getState() }
+    },
+
+    [SET_STATE]: (state, action) => {
+        queryBuilder.setState(action.payload)
         return { ...state, ...queryBuilder.getState() }
     },
 

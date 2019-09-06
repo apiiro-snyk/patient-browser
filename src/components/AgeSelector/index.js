@@ -197,6 +197,7 @@ export default class AgeSelector extends React.Component
                     <option value="">Any Age</option>
                     <option value="infant">Infants (0 - 12 months, Alive only)</option>
                     <option value="child">Children (1 - 18 years, Alive only)</option>
+                    <option value="teenager">Teenagers (13 - 18 years, Alive only)</option>
                     <option value="adult">Adults (18 - 65 years, Alive only)</option>
                     <option value="elderly">Elderly (65+ years, Alive only)</option>
                     <option value="**custom**">

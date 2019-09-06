@@ -45,6 +45,13 @@ export default class PatientSearch
         this.maxAge = null;
 
         /**
+         * The patient state to search for
+         * @type {String}
+         * @private
+         */
+        this.state = options.state || null;
+
+        /**
          * The patient gender to search for (male|female)
          * @type {String}
          * @private
@@ -280,36 +287,41 @@ export default class PatientSearch
 
         switch (group) {
 
-        // infant - 0 to 12 months
-        case "infant":
-            this.setMinAge(null);
-            this.setMaxAge({ value: 1, units: "years" });
-            break;
+            // infant - 0 to 12 months
+            case "infant":
+                this.setMinAge(null);
+                this.setMaxAge({ value: 1, units: "years" });
+                break;
 
-        // child - 1 to 18 years
-        case "child":
-            this.setMinAge({ value: 1 , units: "years" });
-            this.setMaxAge({ value: 18, units: "years" });
-            break;
+            case "teenager":
+                this.setMinAge({ value: 13 , units: "years" });
+                this.setMaxAge({ value: 18, units: "years" });
+                break;
 
-        // adult - 18 to 65 years
-        case "adult":
-            this.setMinAge({ value: 18, units: "years" });
-            this.setMaxAge({ value: 65, units: "years" });
-            break;
+            // child - 1 to 18 years
+            case "child":
+                this.setMinAge({ value: 1 , units: "years" });
+                this.setMaxAge({ value: 18, units: "years" });
+                break;
 
-        // Elderly - 65+
-        case "elderly":
-            this.setMinAge({ value: 65, units: "years" });
-            this.setMaxAge(null);
-            break;
+            // adult - 18 to 65 years
+            case "adult":
+                this.setMinAge({ value: 18, units: "years" });
+                this.setMaxAge({ value: 65, units: "years" });
+                break;
 
-        // Anything else clears the birthdate param
-        default:
-            this.setMinAge(null);
-            this.setMaxAge(null);
-            // this.ageGroup = null;
-            break;
+            // Elderly - 65+
+            case "elderly":
+                this.setMinAge({ value: 65, units: "years" });
+                this.setMaxAge(null);
+                break;
+
+            // Anything else clears the birthdate param
+            default:
+                this.setMinAge(null);
+                this.setMaxAge(null);
+                // this.ageGroup = null;
+                break;
         }
         return this;
     }
@@ -323,6 +335,22 @@ export default class PatientSearch
     setGender(gender) {
         if (gender !== this.gender) {
             this.gender  = gender;
+            this.schedule({
+                offset : null,
+                cacheId: null
+            });
+        }
+        return this;
+    }
+
+    /**
+     * Sets the state to search for.
+     * @param {String} state
+     * @returns {PatientSearch} Returns the instance
+     */
+    setState(state) {
+        if (state !== this.state) {
+            this.state  = state;
             this.schedule({
                 offset : null,
                 cacheId: null
@@ -385,6 +413,7 @@ export default class PatientSearch
             .setMinAge(this.minAge)
             .setMaxAge(this.maxAge)
             .setGender(this.gender)
+            .setState(this.state)
             .setLimit(this.limit)
             .setOffset(this.cacheId, this.offset)
             .setQueryType(this.queryType)
@@ -404,6 +433,7 @@ export default class PatientSearch
         this.minAge       = null;
         this.maxAge       = null;
         this.gender       = null;
+        this.state        = null;
         this.limit        = null;
         this.offset       = null;
         this.cacheId      = null;
@@ -431,6 +461,7 @@ export default class PatientSearch
             offset      : this.offset,
             cacheId     : this.cacheId,
             ageGroup    : this.ageGroup,
+            state       : this.state,
             params      : { ...this.params },
             queryString : this.queryString,
             queryType   : this.queryType,
@@ -454,6 +485,7 @@ export default class PatientSearch
             "gender",
             "limit",
             "offset",
+            "state",
             // "params",
             "queryType",
             "queryString",
@@ -558,6 +590,14 @@ export default class PatientSearch
                     params.push({
                         name : "gender",
                         value: this.gender
+                    });
+                }
+
+                // State ------------------------------------------------------
+                if (this.state) {
+                    params.push({
+                        name : "address-state",
+                        value: this.state
                     });
                 }
             }
@@ -778,11 +818,11 @@ export default class PatientSearch
         return request({
             url: `${server.url}/Condition?${params.join("&")}`
         })
-        .then(handleConditionsResponse)
-        .then(ids => {
-            this.__cache__.patientIDs = ids;
-            return ids;
-        });
+            .then(handleConditionsResponse)
+            .then(ids => {
+                this.__cache__.patientIDs = ids;
+                return ids;
+            });
     }
 
     /**
@@ -813,25 +853,25 @@ export default class PatientSearch
         };
 
         return this.getPatientIDs(server)
-        .then(ids => {
-            if (ids.length) {
-                // if IDs were found - add them to the patient query
-                options.data = [
-                    options.data,
-                    "_id=" + encodeURIComponent(ids.join(","))
-                ].filter(Boolean).join("&");
-            }
-            else {
-                // If conditions were specified but no patients were found to
-                // have those conditions, then we should exit early.
-                if (this.hasConditions()) {
-                    return Promise.reject(
-                        "No patients found with the specified conditions!"
-                    );
+            .then(ids => {
+                if (ids.length) {
+                    // if IDs were found - add them to the patient query
+                    options.data = [
+                        options.data,
+                        "_id=" + encodeURIComponent(ids.join(","))
+                    ].filter(Boolean).join("&");
                 }
-            }
-            return options;
-        })
-        .then(request);
+                else {
+                    // If conditions were specified but no patients were found to
+                    // have those conditions, then we should exit early.
+                    if (this.hasConditions()) {
+                        return Promise.reject(
+                            "No patients found with the specified conditions!"
+                        );
+                    }
+                }
+                return options;
+            })
+            .then(request);
     }
 }

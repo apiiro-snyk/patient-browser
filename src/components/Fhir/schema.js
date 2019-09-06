@@ -86,6 +86,11 @@ const Person = [
         defaultValue: "N/A"
     },
     {
+        label: "State",
+        path: "state",
+        defaultValue: "N/A"
+    },
+    {
         label: "Birth Date",
         path: "birthDate",
         defaultValue: "N/A"

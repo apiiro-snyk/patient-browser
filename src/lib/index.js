@@ -294,7 +294,7 @@ export function getPatientEmail(patient = {}) {
 export function getPatientHomeAddress(patient = {}) {
     let a = (patient.address || []);
     a = a.find(c => c.use == "home") || a[0] || {};
-    return [a.line, a.postalCode, a.city, a.country]
+    return [a.line, a.postalCode, a.city, a.state, a.country]
         .map(x => String(x || "").trim())
         .filter(Boolean)
         .join(" ");
